@@ -1,0 +1,6 @@
+{
+  "name": "Campanha Bem-Estar - Ajude a Mel (Cachorrinha Resgatada)",
+  "description": "Mel é uma cachorrinha abandonada que quebrou os dois ossos da patinha e precisa de uma cirurgia urgente. Sem sua ajuda, ela pode não sobreviver. 💔",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
