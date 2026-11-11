@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Heart,
   Clock,
@@ -52,6 +52,8 @@ export default function App() {
   const [showExitModal, setShowExitModal] = useState(false);
   const [selectedAmount] = useState<number | null>(50);
   const [donorName] = useState<string>('');
+
+  const isNavigatingRef = useRef(false);
 
   // Fundraising Progress State
   const [raisedAmount, setRaisedAmount] = useState<number>(() => {
@@ -180,11 +182,15 @@ export default function App() {
     );
   };
 
-  // Immediate 100% reliable navigation to checkout link with Meta tracking
-  const navigateToCheckout = (val?: number, e?: React.MouseEvent) => {
-    if (e) {
+  // Immediate 100% reliable navigation on first touch or click (even while page is scrolling)
+  const navigateToCheckout = (val?: number, e?: React.SyntheticEvent) => {
+    if (isNavigatingRef.current) return;
+    isNavigatingRef.current = true;
+
+    if (e && e.cancelable) {
       e.preventDefault();
     }
+
     const amountVal = val || selectedAmount || 50;
 
     // Fast non-blocking Meta tracking
@@ -193,12 +199,16 @@ export default function App() {
 
     const targetUrl = val ? `${CHECKOUT_LINK}?valor=${val}` : CHECKOUT_LINK;
 
-    // Reliable navigation
+    // Immediate redirection
     try {
       window.location.href = targetUrl;
     } catch (err) {
       window.open(targetUrl, '_self');
     }
+
+    setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 1500);
   };
 
   return (
@@ -248,10 +258,9 @@ export default function App() {
                 </a>
                 <a
                   href={CHECKOUT_LINK}
-                  onClick={(e) => {
-                    setIsMenuOpen(false);
-                    navigateToCheckout(50, e);
-                  }}
+                  onTouchStart={(e) => navigateToCheckout(50, e)}
+                  onPointerDown={(e) => navigateToCheckout(50, e)}
+                  onClick={(e) => navigateToCheckout(50, e)}
                   className="site-header__menu-item site-header__menu-cta mt-2"
                 >
                   ❤️ AJUDAR A MEL AGORA
@@ -423,6 +432,8 @@ export default function App() {
                   </p>
                   <a
                     href={CHECKOUT_LINK}
+                    onTouchStart={(e) => navigateToCheckout(50, e)}
+                    onPointerDown={(e) => navigateToCheckout(50, e)}
                     onClick={(e) => navigateToCheckout(50, e)}
                     className="inline-story-cta w-full text-center text-decoration-none border-0 cursor-pointer"
                   >
@@ -554,6 +565,8 @@ export default function App() {
                 <div className="mt-4 pt-4 border-t border-slate-100 text-center">
                   <a
                     href={CHECKOUT_LINK}
+                    onTouchStart={(e) => navigateToCheckout(50, e)}
+                    onPointerDown={(e) => navigateToCheckout(50, e)}
                     onClick={(e) => navigateToCheckout(50, e)}
                     className="text-xs text-[#24CA68] hover:text-[#1fab58] italic font-semibold underline bg-transparent border-0 cursor-pointer"
                   >
@@ -570,6 +583,8 @@ export default function App() {
       <div id="fixed-mobile">
         <a
           href={CHECKOUT_LINK}
+          onTouchStart={(e) => navigateToCheckout(50, e)}
+          onPointerDown={(e) => navigateToCheckout(50, e)}
           onClick={(e) => navigateToCheckout(50, e)}
           className="btn-ajudar text-center flex items-center justify-center text-decoration-none border-0"
         >
@@ -663,6 +678,8 @@ export default function App() {
             <div className="grid grid-cols-2 gap-2 mb-3">
               <a
                 href={`${CHECKOUT_LINK}?valor=20`}
+                onTouchStart={(e) => navigateToCheckout(20, e)}
+                onPointerDown={(e) => navigateToCheckout(20, e)}
                 onClick={(e) => navigateToCheckout(20, e)}
                 className="py-2.5 bg-white border-2 border-[#24CA68] text-[#24CA68] font-bold text-base rounded-xl hover:bg-emerald-50 transition-colors flex items-center justify-center cursor-pointer text-decoration-none"
               >
@@ -670,6 +687,8 @@ export default function App() {
               </a>
               <a
                 href={`${CHECKOUT_LINK}?valor=50`}
+                onTouchStart={(e) => navigateToCheckout(50, e)}
+                onPointerDown={(e) => navigateToCheckout(50, e)}
                 onClick={(e) => navigateToCheckout(50, e)}
                 className="py-2.5 bg-white border-2 border-[#24CA68] text-[#24CA68] font-bold text-base rounded-xl hover:bg-emerald-50 transition-colors flex items-center justify-center cursor-pointer text-decoration-none"
               >
@@ -677,6 +696,8 @@ export default function App() {
               </a>
               <a
                 href={`${CHECKOUT_LINK}?valor=70`}
+                onTouchStart={(e) => navigateToCheckout(70, e)}
+                onPointerDown={(e) => navigateToCheckout(70, e)}
                 onClick={(e) => navigateToCheckout(70, e)}
                 className="py-2.5 bg-white border-2 border-[#24CA68] text-[#24CA68] font-bold text-base rounded-xl hover:bg-emerald-50 transition-colors flex items-center justify-center cursor-pointer text-decoration-none"
               >
@@ -684,6 +705,8 @@ export default function App() {
               </a>
               <a
                 href={`${CHECKOUT_LINK}?valor=100`}
+                onTouchStart={(e) => navigateToCheckout(100, e)}
+                onPointerDown={(e) => navigateToCheckout(100, e)}
                 onClick={(e) => navigateToCheckout(100, e)}
                 className="py-2.5 bg-white border-2 border-[#24CA68] text-[#24CA68] font-bold text-base rounded-xl hover:bg-emerald-50 transition-colors flex items-center justify-center cursor-pointer text-decoration-none"
               >
@@ -692,6 +715,8 @@ export default function App() {
             </div>
             <a
               href={CHECKOUT_LINK}
+              onTouchStart={(e) => navigateToCheckout(50, e)}
+              onPointerDown={(e) => navigateToCheckout(50, e)}
               onClick={(e) => navigateToCheckout(50, e)}
               className="text-xs text-slate-400 hover:text-slate-600 underline font-medium block text-center mt-2 bg-transparent border-0 cursor-pointer w-full text-decoration-none"
             >
